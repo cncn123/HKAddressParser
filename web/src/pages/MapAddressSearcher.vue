@@ -1,13 +1,14 @@
 <template>
   <v-content>
-    <v-navigation-drawer clipped fixed v-model="drawer" width="600" permanent app>
+    <v-navigation-drawer clipped fixed height="100vh" v-model="drawer" width="600" permanent app style="overflow: auto">
       <v-alert v-model="hasError" type="error">{{ this.errorMessage }}</v-alert>
       <v-container fluid>
         <v-layout row>
           <v-flex pa-0>
-            <h1 class="teal--text">我哋幫你拆解難搞地址</h1>
             <p class="intro-text">
-              輸入香港地址，我們幫你 <span class="amber lighten-4 red--text px-1">地址轉座標</span> 、 <span class="amber lighten-4 red--text px-1">中英翻譯地址</span> 、 <span class="amber lighten-4 red--text px-1">統一地址格式</span>
+              輸入香港地址，我們幫你 <span class="amber lighten-4 red--text px-1">地址轉座標</span> 、 <span
+                class="amber lighten-4 red--text px-1">中英翻譯地址</span> 、 <span
+                class="amber lighten-4 red--text px-1">統一地址格式</span>
             </p>
           </v-flex>
         </v-layout>
@@ -15,25 +16,26 @@
           <v-flex pa-0>
             <v-form ref="form" class="form" @submit.prevent="submit">
               <v-textarea
-                outline
-                name="input-7-1"
-                label="請輸入地址（每行一個地址）"
-                value
-                v-model="addressString"
+                  outline
+                  name="input-7-1"
+                  label="請輸入地址（每行一個地址）"
+                  value
+                  v-model="addressString"
               ></v-textarea>
-              <v-btn @click="submit" dark class="teal">拆地址</v-btn>
+              <v-btn @click="submit" dark class="teal">解析地址</v-btn>
               <template v-if="addressesToSearch.length > 0">
                 <v-progress-linear
-                  background-color="lime"
-                  color="success"
-                  :value="(searchResults.length * 100 / addressesToSearch.length)"
+                    background-color="lime"
+                    color="success"
+                    :value="(searchResults.length * 100 / addressesToSearch.length)"
                 ></v-progress-linear>
-                <ResultCard
-                  v-if="selectedAddress !== undefined"
-                  :result="selectedAddress"
-                  :rank="rank"
-                  :searchAddress="selectedAddress.input"
-                  :filterOptions="filterOptions"
+                <ResultCard v-for="(selectedAddress, index) in filteredSearchResults"
+                            :key="index"
+                            :result="selectedAddress"
+                            :rank="rank"
+                            :searchAddress="selectedAddress.input"
+                            :filterOptions="filterOptions"
+                            :serialNumber="index + 1"
                 />
               </template>
             </v-form>
@@ -42,9 +44,9 @@
       </v-container>
     </v-navigation-drawer>
     <VueLayerMap
-      :searchResults="searchResults.filter(address => address !== undefined)"
-      v-on:featureSelected="onFeatureSelected"
-      :filterOptions="filterOptions"
+        :searchResults="searchResults.filter(address => address !== undefined)"
+        v-on:featureSelected="onFeatureSelected"
+        :filterOptions="filterOptions"
     />
   </v-content>
 </template>
@@ -57,7 +59,8 @@ import dclookup from "./../utils/dclookup";
 import ogcioHelper from "./../utils/ogcio-helper";
 import VueLayerMap from "./../components/VueLayerMap";
 import ResultCard from "./../components/ResultCard";
-import { trackMapSearch, trackPinSelected } from "./../utils/ga-helper";
+import {trackMapSearch, trackPinSelected} from "./../utils/ga-helper";
+
 const SEARCH_LIMIT = 200;
 
 export default {
@@ -76,14 +79,18 @@ export default {
     rank: 0 // best match always returns 0
   }),
   computed: {
-    hasError: function() {
+    hasError: function () {
       return this.errorMessage !== null;
     },
     /**
      * Will return undefined if no selected
      */
-    selectedAddress: function() {
+    selectedAddress: function () {
       return this.searchResults.find(address => address && address.selected);
+    },
+
+    filteredSearchResults: function () {
+      return this.searchResults.filter(address => address !== undefined);
     }
   },
   methods: {
@@ -99,19 +106,19 @@ export default {
       trackMapSearch(this, this.addressesToSearch.length);
       const self = this;
       asyncLib.eachOfLimit(
-        this.addressesToSearch,
-        10,
-        // binding this for setting the results during the process
-        asyncify(searchSingleResult.bind(this)),
-        function(err) {
-          // reset the selected markers
-          // self.selectedMarkers = [];
-        }
+          this.addressesToSearch,
+          10,
+          // binding this for setting the results during the process
+          asyncify(searchSingleResult.bind(this)),
+          function (err) {
+            // reset the selected markers
+            // self.selectedMarkers = [];
+          }
       );
       // Auto open first result, TODO: Turn first result's marker to selectedPin
       // this.setSelectedFeature(index)
     },
-    onFeatureSelected: function(feature) {
+    onFeatureSelected: function (feature) {
       if (feature !== null) {
         const index = feature.properties.index;
         this.selectAddress(index);
@@ -119,19 +126,19 @@ export default {
       } else {
       }
     },
-    selectAddress: function(index) {
+    selectAddress: function (index) {
 
-        this.searchResults.filter(address => address !== undefined).forEach((address, key) => {
-          address.selected = address.index === index;
-          //
-          this.$set(this.searchResults, key, address);
-        });
-        // HACK: create a filter option that all fields are enabled
-        this.filterOptions = this.selectedAddress.components("chi").map(component => ({
-          key: component.key,
-          value: component.translatedLabel,
-          enabled: true,
-        }));
+      this.searchResults.filter(address => address !== undefined).forEach((address, key) => {
+        address.selected = address.index === index;
+        //
+        this.$set(this.searchResults, key, address);
+      });
+      // HACK: create a filter option that all fields are enabled
+      this.filterOptions = this.selectedAddress.components("chi").map(component => ({
+        key: component.key,
+        value: component.translatedLabel,
+        enabled: true,
+      }));
     }
   }
 };

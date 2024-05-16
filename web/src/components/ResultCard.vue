@@ -4,13 +4,18 @@
       <v-flex pa-0>
         <v-card flat>
           <v-card-text>
-            <p class="grey--text">搜尋地址：{{searchAddress}}</p>
+
+            <p class="grey--text"> <span>
+              <v-chip color="primary" text-color="white">{{ serialNumber }}</v-chip> 搜尋地址：{{ searchAddress }}</span>
+            </p>
             <h2>{{ result.fullAddress('chi') }}</h2>
             <h3>{{ result.fullAddress('eng') }}</h3>
-              <a
-              class="grey--text no-underline"
-              target='_blank'
-              :href='"https://www.google.com/maps/search/?api=1&query=" + result.coordinate().lat + "," + result.coordinate().lng'>{{ result.coordinate().lat + ", " + result.coordinate().lng }}</a>
+            <a
+                class="grey--text no-underline"
+                target='_blank'
+                :href='"https://www.google.com/maps/search/?api=1&query=" + result.coordinate().lat + "," + result.coordinate().lng'>{{
+                result.coordinate().lat + ", " + result.coordinate().lng
+              }}</a>
 
           </v-card-text>
         </v-card>
@@ -19,8 +24,8 @@
         <v-card flat>
           <v-card-text>
             <v-layout row>
-            <ButtonTick :enabled="!commented" :onClick="onTickClicked"/>
-            <ButtonCross :enabled="!commented" :onClick="onCrossClicked"/>
+              <ButtonTick :enabled="!commented" :onClick="onTickClicked"/>
+              <ButtonCross :enabled="!commented" :onClick="onCrossClicked"/>
             </v-layout>
           </v-card-text>
         </v-card>
@@ -36,19 +41,8 @@
                 <span>地區</span>
               </v-list-tile-content>
               <v-list-tile-content class="align-end">
-                <span>{{ district['2015'].esubdistrict }}</span>
-                <span>{{ district['2015'].csubdistrict }}</span>
-              </v-list-tile-content>
-            </v-list-tile>
-            <v-divider></v-divider>
-            <v-list-tile>
-              <v-list-tile-content>
-                <span>District Council Constituency Area (2019)</span>
-                <span>區議會選區 (2019)</span>
-              </v-list-tile-content>
-              <v-list-tile-content class="align-end">
-                <span>{{ district['2019'].ename }}</span>
-                <span>{{ district['2019'].cname }} ({{ district['2019'].code }})</span>
+                <span>{{ result.record.districtEN}}</span>
+                <span>{{ result.record.districtZH }}</span>
               </v-list-tile-content>
             </v-list-tile>
             <v-divider></v-divider>
@@ -56,8 +50,8 @@
           <v-list dense subheader v-for="key in filteredKeys" :key="key">
             <v-list-tile>
               <v-list-tile-content>
-                <span>{{ result.componentLabelForKey(key, 'eng') }}</span>
-                <span>{{ result.componentLabelForKey(key, 'chi') }}</span>
+                <span>Name</span>
+                <span>名稱</span>
               </v-list-tile-content>
               <v-list-tile-content class="align-end">
                 <span>{{ result.componentValueForKey(key, 'eng') }}</span>
@@ -80,11 +74,12 @@
 </template>
 
 <script>
-import { Address } from "hk-address-parser-lib";
+import {Address} from "hk-address-parser-lib";
 import dclookup from "./../utils/dclookup";
 import ButtonTick from "./ButtonTick";
 import ButtonCross from "./ButtonCross";
-import { trackSingleSearchSatisfied } from "./../utils/ga-helper";
+import {trackSingleSearchSatisfied} from "./../utils/ga-helper";
+
 export default {
   components: {
     ButtonTick,
@@ -94,7 +89,8 @@ export default {
     searchAddress: String,
     rank: Number,
     result: Object,
-    filterOptions: Array
+    filterOptions: Array,
+    serialNumber: Number
   },
   data: () => ({
     commented: false,
@@ -103,7 +99,7 @@ export default {
     localFilterOptions: [],
     expanded: [true] // set the default value by the rank. first object should be expanded
   }),
-  mounted: function() {
+  mounted: function () {
     this.localFilterOptions = this.filterOptions;
     this.filteredKeys = this.getFilteredKeys();
     this.$root.$on("filterUpdate", options => {
@@ -114,35 +110,35 @@ export default {
     //this.expanded = [this.isBestMatch];
   },
   computed: {
-    district: function() {
+    district: function () {
       return dclookup.dcNameFromCoordinates(
-        this.result.coordinate().lat,
-        this.result.coordinate().lng
+          this.result.coordinate().lat,
+          this.result.coordinate().lng
       );
     },
-    isBestMatch: function() {
+    isBestMatch: function () {
       return this.rank === 0;
     }
   },
   methods: {
-    tick: function(e) {
+    tick: function (e) {
       e.stopPropagation();
       console.log("tick");
     },
-    getFilteredKeys: function() {
+    getFilteredKeys: function () {
       return (this.filteredKeys = this.localFilterOptions
-        .filter(
-          opt =>
-            opt.enabled &&
-            this.result.componentLabelForKey(opt.key, "chi") !== ""
-        )
-        .map(opt => opt.key));
+          .filter(
+              opt =>
+                  opt.enabled &&
+                  this.result.componentLabelForKey(opt.key, "chi") !== ""
+          )
+          .map(opt => opt.key));
     },
-    onTickClicked: function() {
+    onTickClicked: function () {
       this.commented = true;
       trackSingleSearchSatisfied(this, this.searchAddress, true);
     },
-    onCrossClicked: function() {
+    onCrossClicked: function () {
       this.commented = true;
       trackSingleSearchSatisfied(this, this.searchAddress, false);
     }
@@ -158,6 +154,7 @@ export default {
 .no-underline:hover {
   text-decoration: underline;
 }
+
 .align-end {
   text-align: right;
   white-space: pre;
