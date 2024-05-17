@@ -5,7 +5,6 @@
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn flat to="/">地圖模式</v-btn>
-        <v-btn flat to="/table">表格模式</v-btn>
       </v-toolbar-items>
     </v-toolbar>
       <router-view/>

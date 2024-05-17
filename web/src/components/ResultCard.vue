@@ -4,7 +4,6 @@
       <v-flex pa-0>
         <v-card flat>
           <v-card-text>
-
             <p class="grey--text"> <span>
               <v-chip color="primary" text-color="white">{{ serialNumber }}</v-chip> 搜尋地址：{{ searchAddress }}</span>
             </p>
@@ -74,11 +73,11 @@
 </template>
 
 <script>
-import {Address} from "hk-address-parser-lib";
+// import {Address} from "hk-address-parser-lib";
 import dclookup from "./../utils/dclookup";
 import ButtonTick from "./ButtonTick";
 import ButtonCross from "./ButtonCross";
-import {trackSingleSearchSatisfied} from "./../utils/ga-helper";
+import {trackSingleSearchSatisfied} from "@/utils/ga-helper";
 
 export default {
   components: {
