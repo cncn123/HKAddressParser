@@ -112,7 +112,7 @@ export default {
           asyncify(searchSingleResult.bind(this)),
           function (err) {
             // reset the selected markers
-            // self.selectedMarkers = [];
+            self.selectedMarkers = [];
           }
       );
       // Auto open first result, TODO: Turn first result's marker to selectedPin
