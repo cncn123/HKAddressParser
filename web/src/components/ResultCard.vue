@@ -1,8 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="result-card">
     <v-layout row>
       <v-flex pa-0>
-        <v-card flat>
+        <v-card flat >
           <v-card-text>
             <p class="grey--text"> <span>
               <v-chip color="primary" text-color="white">{{ serialNumber }}</v-chip> 搜尋地址：{{ searchAddress }}</span>
@@ -160,6 +160,14 @@ export default {
   -webkit-box-align: end;
   -ms-flex-align: end;
   align-items: flex-end;
+}
+
+.result-card {
+  border: 2px solid #009688;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 10px;
+  margin: 10px;
 }
 
 </style>
