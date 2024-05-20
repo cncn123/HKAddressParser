@@ -95,9 +95,15 @@ export default {
     },
     generateDynamicPin: function (index, isSelected) {
       let selectedColor = "FFFFFF";
-      let normalColor = "009688";
+      let normalColor = "2196F3";
+      // beautiful light blue color:
 
-      return "https://chart.googleapis.com/chart?chst=d_map_spin&chld=1.2|0|" + (isSelected == true ? selectedColor : normalColor) + "|32|_|" + (index + 1);
+      let color = isSelected ? selectedColor : normalColor;
+      let text = isSelected ? "Selected" : "Not Selected";
+
+      return `https://via.placeholder.com/50/${color}/000000?text=${index + 1}`;
+
+      // return "https://chart.googleapis.com/chart?chst=d_map_spin&chld=1.2|0|" + (isSelected == true ? selectedColor : normalColor) + "|32|_|" + (index + 1);
     }
   },
   // watch: {
