@@ -2,7 +2,7 @@ import * as turf from "@turf/turf"
 // import dcdata15 from "./../utils/dcdata-2015";
 // import dcdata19 from "./../utils/dcdata-2019";
 
-const dcArea = turf.featureCollection(dcdata15.features);
+// const dcArea = turf.featureCollection(dcdata15.features);
 
 const dcSettings = [
   {
