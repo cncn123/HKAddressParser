@@ -17,12 +17,12 @@ const dcSettings = [
   }
 ]
 
-const dcAreas = dcSettings.map(dc => {
-  return {
-    ...dc,
-    geojson: turf.featureCollection(dc.data.features)
-  }
-})
+// const dcAreas = dcSettings.map(dc => {
+//   return {
+//     ...dc,
+//     geojson: turf.featureCollection(dc.data.features)
+//   }
+// })
 export default {
   /**
    * Return the district and subdistrict name
